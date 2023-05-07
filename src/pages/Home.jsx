@@ -1,9 +1,9 @@
+import SearchForm from "../components/SearchForm";
+
 function Home() {
   return (
-    <div>
-      <p>"hi"</p>
-    </div>
-  )
-}
+    <SearchForm />
+  );
+};
 
 export default Home;
