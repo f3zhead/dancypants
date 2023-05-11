@@ -1,6 +1,9 @@
-function AudioPlayer() {
+
+function AudioPlayer({videoId}) {
+  let url = new URL('https://vid.puffyan.us/latest_version')
+  url.searchParams.append('id', videoId)
   return (
-    <audio controls src="https://vid.puffyan.us/latest_version?id=W8x4m-qpmJ8"></audio>
+    <audio controls src={url.toString()}></audio>
   )
 }
 
