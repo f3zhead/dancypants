@@ -1,7 +1,7 @@
 import axios from "axios";
 
 
-function ilterSong(song) {
+function filterSong(song) {
   const neteaseBaseUrl = 'https://music.163.com'
   const downloadUrl = new URL("/api/song/lyric", neteaseBaseUrl)
   const searchParams = new URLSearchParams()
@@ -21,7 +21,7 @@ function ilterSong(song) {
   }
 }
 
-async function searchNetease(metadata) {
+export async function search(metadata) {
   const neteaseBaseUrl = 'https://music.163.com'
   const neteaseSearchUrl = new URL("/api/search/get", neteaseBaseUrl)
   const result = await axios.get(neteaseSearchUrl.toString(),
@@ -30,7 +30,7 @@ async function searchNetease(metadata) {
   return result.data.result.songs.map(filterSong)
 }
 
-async function downloadNetease(link) {
+export async function download(link) {
   const result = (await axios.get(link)).data
   if ('nolyric' in result || 'uncollected' in result) {
     throw new Error("This item has no lyrics")
