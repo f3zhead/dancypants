@@ -1,18 +1,33 @@
 import { useEffect, useRef, useState } from 'react';
 import { getLyrics } from '../util/download/netease'
+import { lrcToVtt } from '../util/convert'
 import useEventListener from '../hooks/useEventListener'
 
 function AudioPlayer({ videoData }) {
-  const videoId = videoData.videoId.slice(9, 20)
-  const [lyrics, setLyrics] = useState('');
-  useEffect(() => {
-    getLyrics({ title: videoData.title, metadata: videoData.uploaderName }).then((result) => (setLyrics(result)))
-  },
-    [])
-
 
   const canvasRef = useRef(null)
   const trackRef = useRef(null)
+  const videoId = videoData.url.slice(9, 20)
+  const [lyrics, setLyrics] = useState('');
+  useEffect(() => {
+    getLyrics({ title: videoData.title, metadata: videoData.uploaderName }).then((result) => {
+      const lyrics = lrcToVtt(result);
+      setLyrics(lrcToVtt(result))
+      const blob = new Blob([lyrics], { type: "text/vtt" })
+      console.log(blob)
+      console.log('fuk')
+      trackRef.current.src = URL.createObjectURL(blob)
+
+    })
+  },
+    [])
+  // useEffect(() => {
+  //   const blob = new Blob([lyrics], { type: "text/vtt" })
+  //   console.log(blob)
+  //   trackRef.current.src = URL.createObjectURL(blob)
+  // }, [lyrics])
+
+
 
   useEventListener(trackRef, "cuechange", (event) => {
     const canvas = canvasRef.current
@@ -23,12 +38,10 @@ function AudioPlayer({ videoData }) {
     context.fillText(cues, canvas.width / 2, canvas.height / 2)
   })
 
-  let blob = new Blob([lyrics], { type: "text/vtt" })
-
   let trackPlayer =
     <track default
       ref={trackRef} kind="captions"
-      src={URL.createObjectURL(blob)} />
+      src={"/yijianmei.vtt"} />
   let lyricDisplay = <canvas ref={canvasRef} width={700} ></canvas >
 
   let url = new URL('https://vid.puffyan.us/latest_version')

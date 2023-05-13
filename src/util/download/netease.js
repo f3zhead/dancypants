@@ -10,20 +10,28 @@ function filterSong(song) {
   downloadUrl.searchParams.append("kv", -1)
   downloadUrl.searchParams.append("tv", -1)
 
+  const corsProxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(downloadUrl.toString())}`
+
   return {
     "title": song.name,
     "artists": song.artists,
     "album": song.album.name,
     "source": "NetEase",
-    "downloadUrl": downloadUrl.toString()
+    "downloadUrl": corsProxyUrl
   }
 }
 
 async function search(metadata) {
   const neteaseBaseUrl = 'https://music.163.com'
   const neteaseSearchUrl = new URL("/api/search/get", neteaseBaseUrl)
-  const result = await axios.get(neteaseSearchUrl.toString(),
-    { params: { "s": (metadata.title || '') + (metadata.artist || ''), "type": 1 } })
+  neteaseSearchUrl.searchParams.append("s", (metadata.title || '') + (metadata.artist || ''))
+  neteaseSearchUrl.searchParams.append("type", 1)
+  console.log(neteaseSearchUrl.toString())
+
+  const corsProxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(neteaseSearchUrl.toString())}`
+
+
+  const result = await axios.get(corsProxyUrl)
   console.log(result.data.result.songs)
   return result.data.result.songs.map(filterSong)
 }
@@ -34,11 +42,13 @@ async function download(link) {
     throw new Error("This item has no lyrics")
   }
   const lyric = result.lrc.lyric
-  return Buffer.from(lyric, 'utf-8').toString();
+  return lyric
+  // return Buffer.from(lyric, 'utf-8').toString();
 }
 
 // yay
 export async function getLyrics(metadata) {
   const searchResults = await search(metadata)
-  return download(searchResults[0])
+  console.log(searchResults[0])
+  return download(searchResults[0].downloadUrl)
 }
