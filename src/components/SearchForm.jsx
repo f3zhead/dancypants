@@ -1,9 +1,11 @@
 import { Box, VStack, SimpleGrid, Card, CardBody, Image, Text, CardFooter, ButtonGroup, Input, Stack, Button } from '@chakra-ui/react';
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import axios from 'axios';
 
 function SearchResult({ videoData }) {
   return (
+    <Link to="/play" state={{videoId: videoData.url.slice(9, 20)}}>
     <Card>
       <CardBody>
         <Image src={videoData.thumbnail} />
@@ -14,6 +16,7 @@ function SearchResult({ videoData }) {
         </ButtonGroup>
       </CardFooter>
     </Card>
+    </Link>
   )
 }
 

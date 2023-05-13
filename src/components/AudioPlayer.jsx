@@ -22,10 +22,12 @@ function AudioPlayer() {
       src="/yijianmei.vtt" />
   let lyricDisplay = <canvas ref={canvasRef} width={700} ></canvas >
 
+  let url = new URL('https://vid.puffyan.us/latest_version')
+  url.searchParams.append('id', videoId)
   return (
     <div>
       {lyricDisplay}
-      <audio controls src="/vocals.wav">
+      <audio controls src={url.toString()}>
         {trackPlayer}
       </audio>
     </div>
