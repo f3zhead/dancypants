@@ -5,17 +5,17 @@ import axios from 'axios';
 
 function SearchResult({ videoData }) {
   return (
-    <Link to="/play" state={{videoId: videoData.url.slice(9, 20)}}>
-    <Card>
-      <CardBody>
-        <Image src={videoData.thumbnail} />
-        <Text>{videoData.title}</Text>
-      </CardBody>
-      <CardFooter>
-        <ButtonGroup spacing={2}>
-        </ButtonGroup>
-      </CardFooter>
-    </Card>
+    <Link to="/play" state={videoData}>
+      <Card>
+        <CardBody>
+          <Image src={videoData.thumbnail} />
+          <Text>{videoData.title}</Text>
+        </CardBody>
+        <CardFooter>
+          <ButtonGroup spacing={2}>
+          </ButtonGroup>
+        </CardFooter>
+      </Card>
     </Link>
   )
 }

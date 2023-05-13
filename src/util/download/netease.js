@@ -19,7 +19,7 @@ function filterSong(song) {
   }
 }
 
-export async function search(metadata) {
+async function search(metadata) {
   const neteaseBaseUrl = 'https://music.163.com'
   const neteaseSearchUrl = new URL("/api/search/get", neteaseBaseUrl)
   const result = await axios.get(neteaseSearchUrl.toString(),
@@ -28,12 +28,17 @@ export async function search(metadata) {
   return result.data.result.songs.map(filterSong)
 }
 
-export async function download(link) {
+async function download(link) {
   const result = (await axios.get(link)).data
   if ('nolyric' in result || 'uncollected' in result) {
     throw new Error("This item has no lyrics")
   }
-
   const lyric = result.lrc.lyric
   return Buffer.from(lyric, 'utf-8').toString();
+}
+
+// yay
+export async function getLyrics(metadata) {
+  const searchResults = await search(metadata)
+  return download(searchResults[0])
 }
