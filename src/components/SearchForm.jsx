@@ -2,6 +2,8 @@ import { Box, VStack, SimpleGrid, Card, CardBody, Image, Text, CardFooter, Butto
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
+import Navbar from './Navbar';
+
 
 function SearchResult({ videoData }) {
   return (
@@ -33,7 +35,6 @@ const SearchForm = () => {
   };
   return (
     <Box>
-      <h1>Dancypants</h1>
       <VStack spacing={8}>
         <form className='search-form' onSubmit={handleSubmit}>
           <Stack direction='row'>
