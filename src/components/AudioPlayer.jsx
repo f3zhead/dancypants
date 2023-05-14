@@ -24,7 +24,7 @@ function AudioPlayer({ videoData }) {
   },
     [])
   useEffect(() => {
-    axios.get(`https://pipedapi.kavin.rocks/streams/${videoId}`).then((response) => {
+    axios.get(`https://pipedapi.leptons.xyz/streams/${videoId}`).then((response) => {
       setAudioUrl(response.data.audioStreams[0].url)
     })
   }, []
@@ -46,7 +46,7 @@ function AudioPlayer({ videoData }) {
     context.fillText(cues, 0, canvas.height / 1.5)
   })
 
-  let trackPlayer =<track default ref={trackRef} kind="captions" src={"/yijianmei.vtt"} />
+  let trackPlayer = <track default ref={trackRef} kind="captions" src={"/yijianmei.vtt"} />
   let lyricDisplay = <canvas ref={canvasRef} width={window.innerWidth - 500} height={window.innerHeight - 300}></canvas >
   return (
     <div>
