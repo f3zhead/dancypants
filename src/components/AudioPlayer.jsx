@@ -15,7 +15,6 @@ function AudioPlayer({ videoData }) {
       setLyrics(lrcToVtt(result))
       const blob = new Blob([lyrics], { type: "text/vtt" })
       trackRef.current.src = URL.createObjectURL(blob)
-
     })
   },
     [])
@@ -31,9 +30,9 @@ function AudioPlayer({ videoData }) {
     const canvas = canvasRef.current
     const context = canvas.getContext('2d')
     let cues = event.target.track.activeCues[0].text;
-    context.font = "40px sans serif"
+    context.font = canvas.width/cues.length + "px sans serif"
     context.clearRect(0, 0, canvas.width, canvas.height)
-    context.fillText(cues, canvas.width / 2, canvas.height / 2)
+    context.fillText(cues, 0, canvas.height / 1.5)
   })
 
   let trackPlayer =

@@ -17,7 +17,7 @@ export function lrcToVtt(lrcSubtitle: string, fileLength: number) {
     let line = splittedSubtitles[i]
     let nextLine = splittedSubtitles[i + 1]
     const timestamp = line.slice(1, 10)
-    const lyric = line.slice(13)
+    const lyric = line.slice(11)
     const nextTimestamp = nextLine.slice(1, 10)
     result.push(`${timestamp} --> ${nextTimestamp}`)
     result.push(lyric + '\n')
