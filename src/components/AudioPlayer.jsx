@@ -10,12 +10,10 @@ function AudioPlayer({ videoData }) {
   const videoId = videoData.url.slice(9, 20)
   const [lyrics, setLyrics] = useState('');
   useEffect(() => {
-    getLyrics({ title: videoData.title, metadata: videoData.uploaderName }).then((result) => {
+    getLyrics(videoData).then((result) => {
       const lyrics = lrcToVtt(result);
       setLyrics(lrcToVtt(result))
       const blob = new Blob([lyrics], { type: "text/vtt" })
-      console.log(blob)
-      console.log('fuk')
       trackRef.current.src = URL.createObjectURL(blob)
 
     })
