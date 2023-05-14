@@ -33,7 +33,7 @@ const SearchForm = () => {
   };
   return (
     <Box>
-      <h1>Dancypants</h1>
+      <Text fontSize='4xl' color='tomato'>Welcome to Dancypants!</Text>
       <VStack spacing={8}>
         <form className='search-form' onSubmit={handleSubmit}>
           <Stack direction='row'>
@@ -47,6 +47,7 @@ const SearchForm = () => {
               Search
             </Button>
           </Stack>
+          <Text fontSize='2xl' color='DodgerBlue'>Dancypants is a karoake player with a unique feature, being able to score your singing! Choose any song you want, and sing away as Dancypants does its magic!</Text>
         </form>
         <SimpleGrid columns={5} spacing={7}>
           {
@@ -56,6 +57,7 @@ const SearchForm = () => {
         </SimpleGrid>
       </VStack>
     </Box>
+    
   );
 };
 export default SearchForm;
