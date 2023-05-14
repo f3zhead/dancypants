@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { getLyrics } from '../util/download/netease'
+import { getLyrics } from '../util/download/lyrics'
 import { lrcToVtt } from '../util/convert'
 import useEventListener from '../hooks/useEventListener'
 
