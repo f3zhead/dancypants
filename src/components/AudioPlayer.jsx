@@ -38,15 +38,14 @@ function AudioPlayer({ videoData }) {
   let trackPlayer =
     <track default
       ref={trackRef} kind="captions"
-      src={"/yijianmei.vtt"} />
-  let lyricDisplay = <canvas ref={canvasRef} width={700} ></canvas >
-
+      src={"/yijianmei.vtt"}/>
+  let lyricDisplay = <canvas ref={canvasRef} width={window.innerWidth - 150} height={window.innerHeight - 183}></canvas >
   let url = new URL('https://vid.puffyan.us/latest_version')
   url.searchParams.append('id', videoId)
   return (
     <div>
       {lyricDisplay}
-      <audio controls src={url.toString()}>
+      <audio controls src={url.toString()} >
         {trackPlayer}
       </audio>
     </div>
