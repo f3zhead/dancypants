@@ -16,7 +16,7 @@ function KaraokePlayer( { videoData }) {
   };
   return (
     <Center h="100vh">
-      <Box p="5" maxW="320px" borderWidth="1px" background="black">
+      <Box p="5" maxW="320px" borderWidth="1px" background="red">
         <Flex align="baseline" mt={2}>
           <div className="App">
             <Heading className="App-header" style={myStyle} size='md'>
