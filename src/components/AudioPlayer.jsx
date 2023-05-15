@@ -3,6 +3,7 @@ import axios from 'axios';
 import { getLyrics } from '../util/download/lyrics'
 import { lrcToVtt } from '../util/convert'
 import useEventListener from '../hooks/useEventListener'
+import { Center } from '@chakra-ui/layout';
 
 function AudioPlayer({ videoData }) {
 
@@ -47,17 +48,16 @@ function AudioPlayer({ videoData }) {
     context.fillText(cues, 0, canvas.height / 1.5)
   })
 
-  let trackPlayer =
-    <track default
-      ref={trackRef} kind="captions"
-      src={"/yijianmei.vtt"} />
-  let lyricDisplay = <canvas ref={canvasRef} width={window.innerWidth - 150} height={window.innerHeight - 183}></canvas >
+  let trackPlayer =<track default ref={trackRef} kind="captions" src={"/yijianmei.vtt"} />
+  let lyricDisplay = <canvas ref={canvasRef} width={window.innerWidth - 150} height={window.innerHeight - 300}></canvas >
   return (
     <div>
       {lyricDisplay}
-      <audio controls src={audioUrl} crossOrigin="anonymous" >
-        {trackPlayer}
-      </audio>
+      <Center>
+        <audio controls src={audioUrl} crossOrigin="anonymous" >
+          {trackPlayer}
+        </audio>
+      </Center>
     </div>
   )
 }

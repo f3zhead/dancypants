@@ -33,7 +33,6 @@ const SearchForm = () => {
   };
   return (
     <Box>
-      <h1>Dancypants</h1>
       <VStack spacing={8}>
         <form className='search-form' onSubmit={handleSubmit}>
           <Stack direction='row'>
