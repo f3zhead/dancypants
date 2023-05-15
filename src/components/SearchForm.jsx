@@ -2,7 +2,7 @@ import { Box, VStack, SimpleGrid, Card, CardBody, Image, Text, CardFooter, Butto
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
-import Navbar from './Navbar';
+import Navbar from './Navigationbar';
 
 
 function SearchResult({ videoData }) {
