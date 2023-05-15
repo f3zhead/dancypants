@@ -43,6 +43,9 @@ class PitchProcessor extends AudioWorkletProcessor {
       this.mediaSamples = new Array(numAudioSamplesPerAnalysis).fill(0);
       this.micSamples = new Array(numAudioSamplesPerAnalysis).fill(0);
       this.totalSamples = 0;
+      // only send pitch detection after 1024 samples in total have been received
+      this.numCycles = this.numAudioSamplesPerAnalysis / this.mediaSamples.length;
+      this.currentCycle = 0
     }
   };
 
@@ -51,6 +54,8 @@ class PitchProcessor extends AudioWorkletProcessor {
     // contains the audio samples resulting from any processing performed by us.
     // Here, we are performing analysis only to detect pitches so do not modify
     // outputs.
+    const outputChannels = outputs[0]
+    const outputSamples = outputChannels[0]
 
     // inputs holds one or more "channels" of samples. For example, a microphone
     // that records "in stereo" would provide two channels. For this simple app,
@@ -67,6 +72,9 @@ class PitchProcessor extends AudioWorkletProcessor {
     const micInputSamples = micInputChannels[0];
     // console.log(mediaInputSamples, micInputSamples)
 
+    for (let i = 0; i < mediaInputSamples.length; i++) {
+      outputSamples[i] = mediaInputSamples[i]
+    }
     // only process if we have samples from both the media and microphone
     if (mediaInputSamples.length !== 128 || micInputSamples.length !== 128) {
       console.log('fuck!')
@@ -78,41 +86,18 @@ class PitchProcessor extends AudioWorkletProcessor {
     // larger and is a power of 2.
     console.log("total samples", this.totalSamples)
     console.log("numaudiosamples", this.numAudioSamplesPerAnalysis)
-    if (this.totalSamples < this.numAudioSamplesPerAnalysis) {
-      console.log("fewer samples than 1024")
-      for (let i = 0; i < mediaInputSamples.length; i++) {
-        this.mediaSamples[this.totalSamples + i] = mediaInputSamples[i];
-        this.micSamples[this.totalSamples + i] = micInputSamples[i]
-        // this.totalSamples++
-      }
-      this.totalSamples += mediaInputSamples.length
-    } else {
-      console.log("more samples, cycling")
-      // Buffer is already full. We do not want the buffer to grow continually,
-      // so instead will "cycle" the samples through it so that it always
-      // holds the latest ordered samples of length equal to
-      // numAudioSamplesPerAnalysis.
-
-      // Shift the existing samples left by the length of new samples (128).
-      const numNewSamples = mediaInputSamples.length;
-      console.log('numnewsamples', numNewSamples)
-      const numExistingSamples = this.mediaSamples.length - numNewSamples;
-      console.log("existing samples", numExistingSamples)
-      for (let i = 0; i < numExistingSamples; i++) {
-        this.mediaSamples[i] = this.mediaSamples[i + numNewSamples];
-        this.micSamples[i] = this.micSamples[i + numNewSamples];
-      }
-      // Add the new samples onto the end, into the 128-wide slot vacated by
-      // the previous copy.
-      for (let i = 0; i < numNewSamples; i++) {
-        this.mediaSamples[numExistingSamples + i] = mediaInputSamples[i];
-        this.micSamples[numExistingSamples + i] = micInputSamples[i];
-      }
-      this.totalSamples += mediaInputSamples.length;
+    console.log("fewer samples than 1024")
+    for (let i = 0; i < mediaInputSamples.length; i++) {
+      this.mediaSamples[(this.currentCycle * mediaInputSamples.length) + i] = mediaInputSamples[i];
+      this.micSamples[(this.currentCycle * mediaInputSamples.length) + i] = micInputSamples[i]
+      // this.totalSamples++
     }
+    // this.totalSamples += mediaInputSamples.length
+
+    this.currentCycle = (this.currentCycle + 1) % 8
 
     // Once our buffer has enough samples, pass them to the Wasm pitch detector.
-    if (this.totalSamples >= this.numAudioSamplesPerAnalysis && this.detector) {
+    if ((this.currentCycle === 0) && this.detector) {
       console.log("# media samples to be sent", this.mediaSamples.length)
       console.log("# mic samples to be sent", this.micSamples.length)
       const mediaPitch = this.detector.detect_pitch(this.mediaSamples);
