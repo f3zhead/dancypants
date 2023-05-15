@@ -5,17 +5,17 @@ import axios from 'axios';
 
 function SearchResult({ videoData }) {
   return (
-    <Link to="/play" state={{videoId: videoData.url.slice(9, 20)}}>
-    <Card>
-      <CardBody>
-        <Image src={videoData.thumbnail} />
-        <Text>{videoData.title}</Text>
-      </CardBody>
-      <CardFooter>
-        <ButtonGroup spacing={2}>
-        </ButtonGroup>
-      </CardFooter>
-    </Card>
+    <Link to="/play" state={{ videoId: videoData.url.slice(9, 20) }}>
+      <Card>
+        <CardBody>
+          <Image src={videoData.thumbnail} />
+          <Text>{videoData.title}</Text>
+        </CardBody>
+        <CardFooter>
+          <ButtonGroup spacing={2}>
+          </ButtonGroup>
+        </CardFooter>
+      </Card>
     </Link>
   )
 }
@@ -33,7 +33,6 @@ const SearchForm = () => {
   };
   return (
     <Box>
-      <h1>Dancypants</h1>
       <VStack spacing={8}>
         <form className='search-form' onSubmit={handleSubmit}>
           <Stack direction='row'>
