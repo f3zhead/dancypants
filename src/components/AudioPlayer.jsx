@@ -47,7 +47,7 @@ function AudioPlayer({ videoData }) {
   })
 
   let trackPlayer =<track default ref={trackRef} kind="captions" src={"/yijianmei.vtt"} />
-  let lyricDisplay = <canvas ref={canvasRef} width={window.innerWidth - 150} height={window.innerHeight - 300}></canvas >
+  let lyricDisplay = <canvas ref={canvasRef} width={window.innerWidth - 500} height={window.innerHeight - 300}></canvas >
   return (
     <div>
       {lyricDisplay}
