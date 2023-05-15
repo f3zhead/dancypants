@@ -75,8 +75,8 @@ export async function setupAudio(onPitchDetectedCallback) {
     node.init(wasmBytes, onPitchDetectedCallback, numAudioSamplesPerAnalysis);
 
     // Connect the audio sources (microphone output and media output) to our analysis node.
-    mediaSource.connect(node);
-    micSource.connect(node)
+    mediaSource.connect(node, 0, 0);
+    micSource.connect(node, 0, 1)
 
     // Connect our analysis node to the output. Required even though we do not
     // output any audio. Allows further downstream audio processing or output to

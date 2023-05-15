@@ -24,8 +24,6 @@ function AudioPlayer({ videoData }) {
     [])
   useEffect(() => {
     axios.get(`https://pipedapi.kavin.rocks/streams/${videoId}`).then((response) => {
-      console.log(response)
-      console.log(response.data.audioStreams[0].url)
       setAudioUrl(response.data.audioStreams[0].url)
     })
   }, []

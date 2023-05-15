@@ -38,9 +38,9 @@ export default class PitchNode extends AudioWorkletNode {
         sampleRate: this.context.sampleRate,
         numAudioSamplesPerAnalysis: this.numAudioSamplesPerAnalysis
       });
-    } else if (event.type === "pitch") {
+    } else if (event.type === "pitchDiff") {
       // A pitch was detected. Invoke our callback which will result in the UI updating.
-      this.onPitchDetectedCallback(event.pitch);
+      this.onPitchDetectedCallback(event.pitchDiff);
     }
   }
 }
