@@ -29,7 +29,7 @@ const SearchForm = () => {
     const searchValue = e.target.elements.search.value;
     if (!searchValue) return;
     setSearchTerm(searchValue);
-    axios.get("https://pipedapi.tokhmi.xyz/search", { params: { "q": searchValue, "filter": "music_songs" } }).then((response) => { setAPIData(response.data.items) })
+    axios.get("https://pipedapi.kavin.rocks/search", { params: { "q": searchValue, "filter": "music_songs" } }).then((response) => { setAPIData(response.data.items) })
   };
   return (
     <Box>

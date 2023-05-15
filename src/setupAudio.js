@@ -37,7 +37,8 @@ export async function setupAudio(onPitchDetectedCallback) {
   const mediaStream = await getWebAudioMediaStream();
 
   const context = new window.AudioContext();
-  const audioSource = context.createMediaStreamSource(mediaStream);
+  const micSource = context.createMediaStreamSource(mediaStream);
+  const mediaSource = context.createMediaElementSource(document.querySelector("audio"))
 
   let node;
 
@@ -58,7 +59,7 @@ export async function setupAudio(onPitchDetectedCallback) {
 
     // Create the AudioWorkletNode which enables the main Javascript thread to
     // communicate with the audio processor (which runs in a Worklet).
-    node = new PitchNode(context, "PitchProcessor");
+    node = new PitchNode(context, "PitchProcessor", { numberOfInputs: 2 });
 
     // numAudioSamplesPerAnalysis specifies the number of consecutive audio samples that
     // the pitch detection algorithm calculates for each unit of work. Larger values tend
@@ -73,8 +74,9 @@ export async function setupAudio(onPitchDetectedCallback) {
     // parameters for the Wasm detection algorithm.
     node.init(wasmBytes, onPitchDetectedCallback, numAudioSamplesPerAnalysis);
 
-    // Connect the audio source (microphone output) to our analysis node.
-    audioSource.connect(node);
+    // Connect the audio sources (microphone output and media output) to our analysis node.
+    mediaSource.connect(node);
+    micSource.connect(node)
 
     // Connect our analysis node to the output. Required even though we do not
     // output any audio. Allows further downstream audio processing or output to

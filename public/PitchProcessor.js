@@ -53,6 +53,7 @@ class PitchProcessor extends AudioWorkletProcessor {
     // we use assume either "mono" input or the "left" channel if microphone is
     // stereo.
 
+    // console.log(inputs)
     const inputChannels = inputs[0];
 
     // inputSamples holds an array of new samples to process.
