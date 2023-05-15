@@ -1,7 +1,7 @@
 import './App.css'
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ChakraProvider } from '@chakra-ui/react'
-import NavigationBar from './components/Navigationbar'
+import NavigationBar from './components/NavigationBar'
 import Home from "./pages/Home"
 import KaraokePlayer from "./pages/KaraokePlayer"
 
