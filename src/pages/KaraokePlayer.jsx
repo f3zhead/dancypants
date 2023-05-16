@@ -8,9 +8,8 @@ function KaraokePlayer() {
   const data = location.state;
   return (
     <Box>
-      <Heading>Now Playing</Heading>
+      <Heading>Now Playing: {location.state.title}</Heading>
       <AudioPlayer videoData={data} />
-      <AudioRecorderControl />
     </Box>
   )
 }

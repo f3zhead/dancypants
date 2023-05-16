@@ -1,9 +1,11 @@
 import { useEffect, useRef, useState } from 'react';
 import axios from 'axios';
+import PitchReadout from "./PitchReadout";
 import { getLyrics } from '../util/download/lyrics'
 import { lrcToVtt } from '../util/convert'
 import useEventListener from '../hooks/useEventListener'
-import { Center } from '@chakra-ui/layout';
+import { Center, Box } from '@chakra-ui/layout';
+import { setupAudio } from '../setupAudio';
 
 function AudioPlayer({ videoData }) {
 
@@ -13,12 +15,16 @@ function AudioPlayer({ videoData }) {
   const [lyrics, setLyrics] = useState('');
   const [audioUrl, setAudioUrl] = useState('');
 
+  const [audio, setAudio] = useState(undefined);
+  const [running, setRunning] = useState(false);
+  const [latestPitch, setLatestPitch] = useState(undefined);
+
 
   useEffect(() => {
     getLyrics(videoData).then((result) => {
       const lyrics = lrcToVtt(result);
       setLyrics(lrcToVtt(result))
-      const blob = new Blob([lyrics], { type: "text/vtt" })
+      const blob = new Blob([lyrics], { type: "text/vtt;charset=UTF-8" })
       trackRef.current.src = URL.createObjectURL(blob)
     })
   },
@@ -48,15 +54,21 @@ function AudioPlayer({ videoData }) {
 
   let trackPlayer = <track default ref={trackRef} kind="captions" src={"/yijianmei.vtt"} />
   let lyricDisplay = <canvas ref={canvasRef} width={window.innerWidth - 500} height={window.innerHeight - 300}></canvas >
+
   return (
-    <div>
+    <Box>
       {lyricDisplay}
       <Center>
-        <audio controls src={audioUrl} crossOrigin="anonymous" >
+        <audio controls src={audioUrl} onPlay={async () => {
+          setAudio(await setupAudio(setLatestPitch));
+          setRunning(true);
+
+        }} crossOrigin="anonymous" >
           {trackPlayer}
         </audio>
       </Center>
-    </div>
+      <PitchReadout running={running} latestPitch={latestPitch} />
+    </Box>
   )
 }
 

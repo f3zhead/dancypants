@@ -84,9 +84,9 @@ class PitchProcessor extends AudioWorkletProcessor {
     // audio samples have arrived. We simplify the logic for filling up the
     // buffer by making an assumption that the analysis size is 128 samples or
     // larger and is a power of 2.
-    console.log("total samples", this.totalSamples)
-    console.log("numaudiosamples", this.numAudioSamplesPerAnalysis)
-    console.log("fewer samples than 1024")
+    // console.log("total samples", this.totalSamples)
+    // console.log("numaudiosamples", this.numAudioSamplesPerAnalysis)
+    // console.log("fewer samples than 1024")
     for (let i = 0; i < mediaInputSamples.length; i++) {
       this.mediaSamples[(this.currentCycle * mediaInputSamples.length) + i] = mediaInputSamples[i];
       this.micSamples[(this.currentCycle * mediaInputSamples.length) + i] = micInputSamples[i]
@@ -98,13 +98,15 @@ class PitchProcessor extends AudioWorkletProcessor {
 
     // Once our buffer has enough samples, pass them to the Wasm pitch detector.
     if ((this.currentCycle === 0) && this.detector) {
-      console.log("# media samples to be sent", this.mediaSamples.length)
-      console.log("# mic samples to be sent", this.micSamples.length)
+      // console.log("# media samples to be sent", this.mediaSamples.length)
+      // console.log("# mic samples to be sent", this.micSamples.length)
       const mediaPitch = this.detector.detect_pitch(this.mediaSamples);
       const micPitch = this.detector.detect_pitch(this.micSamples);
 
       if (mediaPitch !== 0 && micPitch !== 0) {
-        this.port.postMessage({ type: "pitchDiff", pitchDiff: Math.abs(mediaPitch - micPitch) });
+        const pitchDiff = Math.abs(mediaPitch - micPitch)
+        // console.log(pitchDiff)
+        this.port.postMessage({ type: "pitchDiff", pitchDiff: pitchDiff });
       }
     }
 
