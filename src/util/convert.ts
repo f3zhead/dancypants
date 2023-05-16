@@ -96,8 +96,11 @@ function build(captions, options) {
 
     if (typeof caption.type === "undefined" || caption.type == "caption") {
       // content += (i + 1).toString() + eol;
+
+      if (!caption.text) {
+        continue
+      }
       content += helper.toTimeString(caption.start) + " --> " + helper.toTimeString(caption.end) + eol;
-      console.log(caption.text)
       content += caption.text + eol;
       content += eol;
       continue;

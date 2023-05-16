@@ -62,7 +62,6 @@ function AudioPlayer({ videoData }) {
         <audio controls src={audioUrl} onPlay={async () => {
           setAudio(await setupAudio(setLatestPitch));
           setRunning(true);
-
         }} crossOrigin="anonymous" >
           {trackPlayer}
         </audio>
