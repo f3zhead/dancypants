@@ -32,9 +32,12 @@ async function download(link) {
   if ('nolyric' in result || 'uncollected' in result) {
     throw new Error("This item has no lyrics")
   }
-  const lyric = result.lrc.lyric
-  return lyric
+  return result
   // return Buffer.from(lyric, 'utf-8').toString();
+}
+
+function getLyric(lyricData) {
+  return lyricData.lrc.lyric
 }
 
 function getDownloadUrl(neteaseSongId) {
@@ -50,26 +53,29 @@ function getDownloadUrl(neteaseSongId) {
   return corsProxyUrl;
 }
 
-function chooseSong(searchResults, metadata) {
+async function chooseSong(searchResults, metadata) {
+  let lyric;
   // forgive my sins
   const songDuration = metadata.duration;
-  const songLengthDiffs = searchResults.map((element) => [Math.abs(songDuration - element.duration), element.id])
-  console.log(songLengthDiffs)
 
-  let smallestSongDiff = songLengthDiffs[0][0]
-  let smallestSongDiffId = songLengthDiffs[0][1]
-  for (const element of songLengthDiffs) {
-    if (element[0] < smallestSongDiff) {
-      smallestSongDiff = element[0]
-      smallestSongDiffId = element[1]
+  function getSongDiff(songLength) {
+    return Math.abs(songLength - songDuration)
+  }
+  searchResults.sort((a, b) => getSongDiff(a.duration / 1000) - getSongDiff(b.duration / 1000))
+  console.log('search result', searchResults)
+  for (const element of searchResults) {
+    lyric = getLyric(await download(getDownloadUrl(element.id)))
+    if (!lyric) {
+      continue
+    } else {
+      return lyric;
     }
   }
-  return getDownloadUrl(smallestSongDiffId)
+  return "o dear"
 }
 // yay
 export async function getLyrics(metadata) {
   const searchResults = await search(metadata)
   // const songChoiceUrl = chooseSong(searchResults, metadata)
-  const songChoiceUrl = getDownloadUrl(searchResults[0].id)
-  return download(songChoiceUrl)
+  return await chooseSong(searchResults, metadata)
 }
