@@ -81,7 +81,9 @@ export async function setupAudio(onPitchDetectedCallback) {
     // Connect our analysis node to the output. Required even though we do not
     // output any audio. Allows further downstream audio processing or output to
     // occur.
-    node.connect(context.destination);
+    // node.connect(context.destination);
+    // mediaSource.connect(context.destination)
+    micSource.connect(context.destination)
   } catch (err) {
     throw new Error(
       `Failed to load audio analyzer WASM module. Further info: ${err.message}`
