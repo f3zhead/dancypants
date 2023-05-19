@@ -72,10 +72,9 @@ class PitchProcessor extends AudioWorkletProcessor {
     const micInputSamples = micInputChannels[0];
     // console.log(mediaInputSamples, micInputSamples)
 
-    // for (let i = 0; i < mediaInputSamples.length; i++) {
-    //   outputSamples[i] = mediaInputSamples[i]
-
-    // }
+    for (let i = 0; i < mediaInputSamples.length; i++) {
+      outputSamples[i] = mediaInputSamples[i]
+    }
     // only process if we have samples from both the media and microphone
     if (mediaInputSamples.length !== 128 || micInputSamples.length !== 128) {
       console.log('fuck!')
