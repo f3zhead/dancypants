@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import axios from 'axios';
 import PitchReadout from "./PitchReadout";
+import ScoreReadout from "./ScoreReadout";
 import { getLyrics } from '../util/download/lyrics'
 import { lrcToVtt } from '../util/convert'
 import useEventListener from '../hooks/useEventListener'
@@ -57,9 +58,10 @@ function AudioPlayer({ videoData }) {
 
   return (
     <Box>
+      <ScoreReadout running={running} latestPitch={latestPitch} />
       {lyricDisplay}
       <Center>
-        <audio controls src={audioUrl} onPlay={async () => {
+        <audio controls controlsList="nodownload" src={audioUrl} onPlay={async () => {
           setAudio(await setupAudio(setLatestPitch));
           setRunning(true);
         }} crossOrigin="anonymous" >
