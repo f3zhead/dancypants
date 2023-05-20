@@ -9,13 +9,16 @@ class PitchProcessor extends AudioWorkletProcessor {
     // once we know how many samples need to be stored. Meanwhile, an empty
     // array is used, so that early calls to process() with empty channels
     // do not break initialization.
-    this.samples = [];
+    this.mediaSamples = []
+    this.micSamples = []
     this.totalSamples = 0;
 
     // Listen to events from the PitchNode running on the main thread.
     this.port.onmessage = (event) => this.onmessage(event.data);
 
     this.detector = null;
+    // hacky hack
+    this.numAudioSamplesPerAnalysis = 1024
   }
 
   onmessage(event) {
@@ -37,8 +40,12 @@ class PitchProcessor extends AudioWorkletProcessor {
 
       // Holds a buffer of audio sample values that we'll send to the Wasm module
       // for analysis at regular intervals.
-      this.samples = new Array(numAudioSamplesPerAnalysis).fill(0);
+      this.mediaSamples = new Array(numAudioSamplesPerAnalysis).fill(0);
+      this.micSamples = new Array(numAudioSamplesPerAnalysis).fill(0);
       this.totalSamples = 0;
+      // only send pitch detection after 1024 samples in total have been received
+      this.numCycles = this.numAudioSamplesPerAnalysis / this.mediaSamples.length;
+      this.currentCycle = 0
     }
   };
 
@@ -47,51 +54,59 @@ class PitchProcessor extends AudioWorkletProcessor {
     // contains the audio samples resulting from any processing performed by us.
     // Here, we are performing analysis only to detect pitches so do not modify
     // outputs.
+    const outputChannels = outputs[0]
+    const outputSamples = outputChannels[0]
 
     // inputs holds one or more "channels" of samples. For example, a microphone
     // that records "in stereo" would provide two channels. For this simple app,
     // we use assume either "mono" input or the "left" channel if microphone is
     // stereo.
 
-    const inputChannels = inputs[0];
+    // console.log(inputs)
+    const mediaInputChannels = inputs[0];
+    const micInputChannels = inputs[1];
+
 
     // inputSamples holds an array of new samples to process.
-    const inputSamples = inputChannels[0];
+    const mediaInputSamples = mediaInputChannels[0];
+    const micInputSamples = micInputChannels[0];
+    // console.log(mediaInputSamples, micInputSamples)
+
+    for (let i = 0; i < mediaInputSamples.length; i++) {
+      outputSamples[i] = mediaInputSamples[i]
+    }
+    // only process if we have samples from both the media and microphone
+    if (mediaInputSamples.length !== 128 || micInputSamples.length !== 128) {
+      console.log('fuck!')
+    }
 
     // In the AudioWorklet spec, process() is called whenever exactly 128 new
     // audio samples have arrived. We simplify the logic for filling up the
     // buffer by making an assumption that the analysis size is 128 samples or
     // larger and is a power of 2.
-    if (this.totalSamples < this.numAudioSamplesPerAnalysis) {
-      for (const sampleValue of inputSamples) {
-        this.samples[this.totalSamples++] = sampleValue;
-      }
-    } else {
-      // Buffer is already full. We do not want the buffer to grow continually,
-      // so instead will "cycle" the samples through it so that it always
-      // holds the latest ordered samples of length equal to
-      // numAudioSamplesPerAnalysis.
-
-      // Shift the existing samples left by the length of new samples (128).
-      const numNewSamples = inputSamples.length;
-      const numExistingSamples = this.samples.length - numNewSamples;
-      for (let i = 0; i < numExistingSamples; i++) {
-        this.samples[i] = this.samples[i + numNewSamples];
-      }
-      // Add the new samples onto the end, into the 128-wide slot vacated by
-      // the previous copy.
-      for (let i = 0; i < numNewSamples; i++) {
-        this.samples[numExistingSamples + i] = inputSamples[i];
-      }
-      this.totalSamples += inputSamples.length;
+    // console.log("total samples", this.totalSamples)
+    // console.log("numaudiosamples", this.numAudioSamplesPerAnalysis)
+    // console.log("fewer samples than 1024")
+    for (let i = 0; i < mediaInputSamples.length; i++) {
+      this.mediaSamples[(this.currentCycle * mediaInputSamples.length) + i] = mediaInputSamples[i];
+      this.micSamples[(this.currentCycle * mediaInputSamples.length) + i] = micInputSamples[i]
+      // this.totalSamples++
     }
+    // this.totalSamples += mediaInputSamples.length
+
+    this.currentCycle = (this.currentCycle + 1) % 8
 
     // Once our buffer has enough samples, pass them to the Wasm pitch detector.
-    if (this.totalSamples >= this.numAudioSamplesPerAnalysis && this.detector) {
-      const result = this.detector.detect_pitch(this.samples);
+    if ((this.currentCycle === 0) && this.detector) {
+      // console.log("# media samples to be sent", this.mediaSamples.length)
+      // console.log("# mic samples to be sent", this.micSamples.length)
+      const mediaPitch = this.detector.detect_pitch(this.mediaSamples);
+      const micPitch = this.detector.detect_pitch(this.micSamples);
 
-      if (result !== 0) {
-        this.port.postMessage({ type: "pitch", pitch: result });
+      if (mediaPitch !== 0 && micPitch !== 0) {
+        const pitchDiff = Math.abs(mediaPitch - micPitch)
+        // console.log(pitchDiff)
+        this.port.postMessage({ type: "pitchDiff", pitchDiff: pitchDiff });
       }
     }
 

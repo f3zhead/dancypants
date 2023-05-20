@@ -5,8 +5,6 @@ import NavigationBar from './components/NavigationBar'
 import Home from "./pages/Home"
 import KaraokePlayer from "./pages/KaraokePlayer"
 
-
-
 function App() {
   return (
     <ChakraProvider>

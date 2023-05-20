@@ -1,4 +1,5 @@
-use pitch_detection::{McLeodDetector, PitchDetector};
+use pitch_detection::detector::yin::YINDetector;
+use pitch_detection::detector::PitchDetector;
 use wasm_bindgen::prelude::*;
 mod utils;
 
@@ -6,7 +7,7 @@ mod utils;
 pub struct WasmPitchDetector {
   sample_rate: usize,
   fft_size: usize,
-  detector: McLeodDetector<f32>,
+  detector: YINDetector<f32>,
 }
 
 #[wasm_bindgen]
@@ -23,7 +24,7 @@ impl WasmPitchDetector {
     WasmPitchDetector {
       sample_rate,
       fft_size,
-      detector: McLeodDetector::<f32>::new(fft_size, fft_pad),
+      detector: YINDetector::<f32>::new(fft_size, fft_pad),
     }
   }
 

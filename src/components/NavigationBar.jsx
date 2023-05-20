@@ -7,7 +7,7 @@ const NavigationBar = () => {
       <Breadcrumb fontWeight='medium' fontSize='6xl'>
         <BreadcrumbItem isCurrentPage>
           <Stack direction='row'>
-            <Image src={Logo} alt='Dan Abramov' boxSize='100px' />
+            <Image src={Logo} alt='logo' boxSize='100px' />
             <BreadcrumbLink href='/'>Dancypants</BreadcrumbLink>
           </Stack>
         </BreadcrumbItem>
